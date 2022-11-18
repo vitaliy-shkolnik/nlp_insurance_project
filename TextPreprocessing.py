@@ -5,11 +5,13 @@
 # normalize function that does the basic combination of proprocessing steps like lowercase,     #
 # whitespace cleaning, etc.  I then created a Preprocessing function that uses normalize and    #
 # then removes the stopwords and lemmatizes.                                                    #
+#                                                                                               #
 #################################################################################################
 
 # import the necessary libraries
 import re
 import string
+import spacy
 
 import contractions
 import inflect
@@ -18,6 +20,7 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import nltk
 
+nlp = spacy.load('en_core_web_sm')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 
@@ -105,6 +108,22 @@ def lemmatize_verbs(words):
     return lemmas
 
 
+# Lemmatizinf using the SpaCy library
+def lemmatize_sentence(sentence):
+    # Create a Document object
+    doc = nlp(sentence)
+
+    # Create list of tokens from given string
+    tokens = []
+    for token in doc:
+        tokens.append(token)
+
+    # put the sentence back together
+    lemmatized_sentence = " ".join([token.lemma_ for token in doc])
+
+    return lemmatized_sentence
+
+
 def normalize(words):
     words = remove_URL(words)
     words = remove_non_ascii(words)
@@ -124,10 +143,8 @@ def preprocess_text(corpus):
 
     # Remove the stop words
     text = remove_stopwords(text)
-    #
-    # # Lemmatize and tokenize the text
+
+    # Lemmatize and tokenize the text
     text = lemmatize_verbs(text)
 
     return text
-
-
